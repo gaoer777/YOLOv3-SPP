@@ -188,7 +188,7 @@ class YOLOLayer(nn.Module):
             p[:, 4:] = torch.sigmoid(p[:, 4:])
             p[:, 5:] = p[:, 5:self.no] * p[:, 4:5]
             return p
-        else:  # inference
+        else:  # inference，如果是测试的话
             # [bs, anchor, grid, grid, xywh + obj + classes]
             io = p.clone()  # inference output
             io[..., :2] = torch.sigmoid(io[..., :2]) + self.grid  # xy 计算在feature map上的xy坐标

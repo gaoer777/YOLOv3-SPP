@@ -83,9 +83,9 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
 
         # batch index
         # 将数据划分到一个个batch中
-        bi = np.floor(np.arange(n) / batch_size).astype(np.int)
+        bi = np.floor(np.arange(n) / batch_size).astype(np.int)  #这是一个列表，对应某个位置的图片是哪个batch
         # 记录数据集划分后的总batch数
-        nb = bi[-1] + 1  # number of batches
+        nb = bi[-1] + 1  # 总的batch数
 
         self.n = n  # number of images 图像总数目
         self.batch = bi  # batch index of image 记录哪些图片属于哪个batch
@@ -115,7 +115,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
             # print("read {} failed [{}], rebuild {}.".format(sp, e, sp))
             # tqdm库会显示处理的进度
             # 读取每张图片的size信息
-            if rank in [-1, 0]:
+            if rank in [-1, 0]:  # 判断是否是主进程
                 image_files = tqdm(self.img_files, desc="Reading image shapes")
             else:
                 image_files = self.img_files
@@ -136,7 +136,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
             ar = s[:, 1] / s[:, 0]  # aspect ratio
             # argsort函数返回的是数组值从小到大的索引值
             # 按照高宽比例进行排序，这样后面划分的每个batch中的图像就拥有类似的高宽比
-            irect = ar.argsort()
+            irect = ar.argsort()  # 对标签进行排序
             # 根据排序后的顺序重新设置图像顺序、标签顺序以及shape顺序
             self.img_files = [self.img_files[i] for i in irect]
             self.label_files = [self.label_files[i] for i in irect]

@@ -36,7 +36,7 @@ def train(hyp):
     gs = 32  # (pixels) grid size
     assert math.fmod(imgsz_test, gs) == 0, "--img-size %g must be a %g-multiple" % (imgsz_test, gs)
     grid_min, grid_max = imgsz_test // gs, imgsz_test // gs
-    if multi_scale:
+    if multi_scale:  # 如果采用多尺度训练，
         imgsz_min = opt.img_size // 1.5
         imgsz_max = opt.img_size // 0.667
 
@@ -52,6 +52,7 @@ def train(hyp):
     train_path = data_dict["train"]
     test_path = data_dict["valid"]
     nc = 1 if opt.single_cls else int(data_dict["classes"])  # number of classes
+    # 损失计算时用到，用作损失计算时的类别和object的一个增益
     hyp["cls"] *= nc / 80  # update coco-tuned hyp['cls'] to current dataset
     hyp["obj"] *= imgsz_test / 320
 
@@ -72,7 +73,7 @@ def train(hyp):
                                 (x not in output_layer_indices) and
                                 (x - 1 not in output_layer_indices)]
         # Freeze non-output layers
-        # 总共训练3x2=6个parameters
+        # 总共训练3x2=6个parameters（三个预测器x卷积层的weight和bias）
         for idx in freeze_layer_indeces:
             for parameter in model.module_list[idx].parameters():
                 parameter.requires_grad_(False)
